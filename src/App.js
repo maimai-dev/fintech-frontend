@@ -20,7 +20,6 @@ import RendaFormPage from './pages/RendaFormPage';
 import InvestimentoListPage from './pages/InvestimentoListPage';
 import InvestimentoFormPage from './pages/InvestimentoFormPage'; 
 
-import './App.css';
 
 function App() {
     return (

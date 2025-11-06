@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api'; 
-import { Link } from 'react-router-dom';
+import api from '../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { Table, Button, Card, Spinner, Alert, Row, Col } from 'react-bootstrap';
 
 const UsuarioListPage = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUsuarios = async () => {
@@ -18,9 +21,8 @@ const UsuarioListPage = () => {
                 setLoading(false);
             }
         };
-
         fetchUsuarios();
-    }, []); 
+    }, []);
 
     const handleDelete = async (id) => {
         if (window.confirm('Tem certeza que deseja deletar este usuário?')) {
@@ -33,43 +35,79 @@ const UsuarioListPage = () => {
         }
     };
 
-    if (loading) return <p>Carregando usuários...</p>;
-    if (error) return <p>Erro ao carregar usuários: {error}</p>;
+    if (loading) {
+        return (
+            <div className="text-center mt-5">
+                <Spinner animation="border" variant="primary" />
+                <p className="text-light">Carregando usuários...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return <Alert variant="danger">Erro ao carregar usuários: {error}</Alert>;
+    }
 
     return (
-        <div>
-            <h2>Lista de Usuários</h2>
-            <Link to="/usuarios/novo">
-                <button style={{ marginBottom: '20px' }}>Adicionar Novo Usuário</button>
-            </Link>
-            <table border="1" cellPadding="5" cellSpacing="0" style={{ width: '100%' }}>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usuarios.map(usuario => (
-                        <tr key={usuario.id}>
-                            <td>{usuario.id}</td>
-                            <td>{usuario.nome}</td>
-                            <td>{usuario.email}</td>
-                            <td>
-                                <Link to={`/usuarios/editar/${usuario.id}`}>
-                                    <button style={{ marginRight: '5px' }}>Editar</button>
-                                </Link>
-                                <button onClick={() => handleDelete(usuario.id)}>
-                                    Deletar
-                                </button>
-                            </td>
+        <Card>
+            <Card.Header>
+                <Row className="align-items-center">
+                    <Col>
+                        <i className="bi bi-people-fill me-2"></i> 
+                        Lista de Usuários
+                    </Col>
+                    <Col className="text-end">
+                        <Button variant="primary" size="sm" onClick={() => navigate('/usuarios/novo')}>
+                            <i className="bi bi-plus-circle me-2"></i>
+                            Adicionar Usuário
+                        </Button>
+                    </Col>
+                </Row>
+            </Card.Header>
+            <Card.Body>
+                <Table dark hover responsive>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th className="text-center">Ações</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {usuarios?.map(usuario => (
+                            <tr key={usuario.id}>
+                                <td>{usuario.id}</td>
+                                <td>{usuario.nome}</td>
+                                <td>{usuario.email}</td>
+                                <td className="text-center">
+                                    <Button 
+                                        variant="outline-secondary" 
+                                        size="sm" 
+                                        className="me-2"
+                                        onClick={() => navigate(`/usuarios/editar/${usuario.id}`)}
+                                    >
+                                        <i className="bi bi-pencil"></i>
+                                    </Button>
+                                    <Button 
+                                        variant="outline-danger" 
+                                        size="sm"
+                                        onClick={() => handleDelete(usuario.id)}
+                                    >
+                                        <i className="bi bi-trash"></i>
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Card.Body>
+            {usuarios?.length === 0 && (
+                <Card.Footer className="text-muted text-center">
+                    Nenhum usuário encontrado.
+                </Card.Footer>
+            )}
+        </Card>
     );
 };
 
