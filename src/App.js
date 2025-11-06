@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import UsuarioListPage from './pages/UsuarioListPage';
+import UsuarioFormPage from './pages/UsuarioFormPage';
+import GastoListPage from './pages/GastoListPage'; 
+import RendaListPage from './pages/RendaListPage'; 
+import NotFoundPage from './pages/NotFoundPage';
+import './App.css'; 
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="usuarios" element={<UsuarioListPage />} />
+                    <Route path="usuarios/novo" element={<UsuarioFormPage />} />
+                    <Route path="usuarios/editar/:id" element={<UsuarioFormPage />} />
+                    
+                    <Route path="gastos" element={<GastoListPage />} />
+                    <Route path="rendas" element={<RendaListPage />} />
+                    
+                    <Route path="*" element={<NotFoundPage />} />
+                </Route>
+
+                <Route path="/login" element={<LoginPage />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
